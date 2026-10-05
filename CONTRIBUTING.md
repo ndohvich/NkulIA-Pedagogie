@@ -47,9 +47,7 @@ make lint     # ruff + mypy + bandit
 make test     # pytest avec couverture
 ```
 
-(Le `Makefile` et la configuration `pre-commit` arrivent dans la
-prochaine vague de mise en place — voir `docs/ISSUES.md`, epic
-« Outillage qualité ».)
+(`make install` installe aussi les hooks `pre-commit` ; `make precommit` les exécute à la demande.)
 
 ## Règles non négociables (rappel — détail dans `docs/adr/`)
 
@@ -67,6 +65,8 @@ prochaine vague de mise en place — voir `docs/ISSUES.md`, epic
 
 Les versions suivent [Semantic Versioning](https://semver.org/lang/fr/).
 Un tag `vX.Y.Z` déclenche la construction de l'exécutable Windows et sa
-publication en Release GitHub (voir le futur workflow de release —
-c'est l'équivalent « CD » de ce projet, adapté à une application de
-bureau plutôt qu'à un service web).
+publication en Release GitHub (voir `.github/workflows/release.yml` — c'est l'équivalent « CD » de
+ce projet, adapté à une application de bureau plutôt qu'à un service
+web). Les notes de version sont générées depuis les commits : d'où
+l'importance des Conventional Commits. La Release est créée en
+**brouillon** : lancez l'exécutable une fois avant de la publier.

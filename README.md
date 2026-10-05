@@ -107,14 +107,28 @@ python desktop/main.py
 Détail complet des commandes de qualité (lint, tests) : voir
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+## Configuration de la génération
+
+Par défaut, NkulIA fonctionne **sans réseau** (fournisseur `offline` : il
+recopie le référentiel et marque le reste « information manquante »).
+Pour activer un modèle de langage distant (optionnel) :
+
+| Variable | Rôle |
+|---|---|
+| `NKULIA_LLM_PROVIDER` | `offline` (défaut) ou `anthropic` |
+| `NKULIA_LLM_API_KEY` | clé API — uniquement par variable d'environnement, jamais dans le code ni la base |
+| `NKULIA_LLM_MODEL` | modèle utilisé (défaut dans `backend/app/core/config.py`) |
+
+Voir [`docs/adr/0005`](docs/adr/0005-fournisseur-de-generation.md).
+
 ## Feuille de route
 
 | Phase | Contenu | Statut |
 |---|---|---|
 | 1 — Discovery | Analyse du besoin et du corpus pédagogique réel | ✅ |
 | 2 — Architecture | Stack, schéma de données, ADR | ✅ |
-| 3 — Fondations | Gouvernance, outillage qualité, authentification locale | 🔄 en cours |
-| 4 — MVP | Import, sélection pédagogique, génération de cours, export PDF | ⏳ |
+| 3 — Fondations | Gouvernance, outillage qualité, authentification locale | ✅ |
+| 4 — MVP | Import, sélection pédagogique, génération de cours, export PDF | ✅ (premier gabarit : fiche de cours) |
 | 5 — Intelligence avancée | RAG complet, assistant conversationnel, examens | ⏳ |
 | 6 — Industrialisation | Packaging release, sauvegardes, durcissement sécurité | ⏳ |
 
