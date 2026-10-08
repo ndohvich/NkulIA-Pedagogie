@@ -28,6 +28,7 @@ entre la fenêtre et l'API — les deux partagent désormais la même origine.
 """
 
 import argparse
+import os
 import sys
 import threading
 import time
@@ -54,11 +55,18 @@ def get_ressources_dir() -> Path:
 
 RESSOURCES = get_ressources_dir()
 
+# La base vit dans le dossier de données de l'utilisateur, JAMAIS à côté de
+# l'exécutable. Doit être défini AVANT d'importer l'application : la
+# configuration lit cette variable à l'import (voir app/core/config.py).
+sys.path.insert(0, str(RESSOURCES / "backend"))
+from app.core.bootstrap import apply_migrations, user_data_dir  # noqa: E402
+
+os.environ.setdefault("NKULIA_DB_PATH", str(user_data_dir() / "nkulia.sqlite3"))
+
 # Import explicite (et non plus une chaîne "app.main:app") pour que
 # PyInstaller détecte fastapi, starlette, pydantic, etc. comme de vraies
 # dépendances de CE script, au lieu de les traiter comme de simples
 # fichiers de données copiés sans analyse.
-sys.path.insert(0, str(RESSOURCES / "backend"))
 from app.main import app as fastapi_app  # noqa: E402  (import après sys.path, volontaire)
 
 # On monte le build React comme fichiers statiques de la même API : la
@@ -103,6 +111,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Lanceur desktop NkulIA")
     parser.add_argument("--dev", action="store_true", help="Mode développement (frontend servi par Vite)")
     args = parser.parse_args()
+
+    # Schéma de base à jour avant d'accepter la moindre requête (voir bootstrap.py).
+    apply_migrations()
 
     threading.Thread(target=demarrer_api, daemon=True).start()
     attendre_que_l_api_reponde("http://127.0.0.1:8000/health")

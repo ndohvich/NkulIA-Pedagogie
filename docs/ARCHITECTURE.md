@@ -76,6 +76,8 @@ Institution 1───* SchoolYear
 Institution 1───* Classroom *───1 SchoolYear
 Teacher 1───* AuthSession
 Teacher *───* Classroom (via TeachingAssignment) *───* Subject
+Classroom 1───* SourceDocument 1───* Module 1───* LearningUnit 1───* TeachingUnit
+Teacher 1───* GeneratedDocument *───1 TeachingUnit ; GeneratedDocument 1───* GeneratedField
 ```
 
 Détail des champs : voir les modèles SQLAlchemy dans `backend/app/db/models.py`

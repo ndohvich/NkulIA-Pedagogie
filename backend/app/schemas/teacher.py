@@ -67,6 +67,8 @@ class TeacherProfileUpdate(BaseModel):
     specialty: str | None = Field(default=None, max_length=120)
     grade: str | None = Field(default=None, max_length=80)
     function: str | None = Field(default=None, max_length=120)
+    # Chaîne vide ou null : détache l'enseignant de son établissement.
+    institution_name: str | None = Field(default=None, max_length=200)
 
 
 class SessionOut(BaseModel):

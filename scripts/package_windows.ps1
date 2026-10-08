@@ -22,6 +22,9 @@ pip install -e ".[dev,desktop]"
 Pop-Location
 
 Write-Host "== PyInstaller ==" -ForegroundColor Cyan
+# `alembic.ddl.sqlite` est chargé par nom au moment des migrations ; `reportlab`
+# (polices/ressources du PDF) et `docx` (gabarit par défaut) embarquent des
+# fichiers de données que l'analyse statique ne voit pas.
 # Les --hidden-import ci-dessous ne sont pas optionnels : uvicorn charge
 # ces sous-modules dynamiquement (par nom, à l'exécution), ce
 # qu'aucune analyse statique de PyInstaller ne peut détecter seule —
@@ -37,6 +40,9 @@ pyinstaller `
   --hidden-import uvicorn.protocols.http.auto `
   --hidden-import uvicorn.protocols.websockets.auto `
   --hidden-import uvicorn.lifespan.on `
+  --hidden-import alembic.ddl.sqlite `
+  --collect-data reportlab `
+  --collect-data docx `
   desktop/main.py
 
 Write-Host "Terminé : dist/NkulIA/NkulIA.exe" -ForegroundColor Green

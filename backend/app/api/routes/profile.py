@@ -10,6 +10,7 @@ from app.api.routes.auth import _profile_out
 from app.db.models import Teacher
 from app.db.session import get_db
 from app.schemas.teacher import TeacherProfileOut, TeacherProfileUpdate
+from app.services.institutions import get_or_create_institution
 
 router = APIRouter(tags=["profile"])
 
@@ -29,6 +30,16 @@ def update_my_profile(
     # client sont pris en compte — un champ omis n'écrase pas la valeur
     # existante avec `None`.
     updates = payload.model_dump(exclude_unset=True)
+
+    # L'établissement n'est pas une colonne de `Teacher` mais une
+    # relation : on le traite à part (voir issue #7 — il alimente
+    # l'en-tête des exports PDF).
+    if "institution_name" in updates:
+        institution_name = (updates.pop("institution_name") or "").strip()
+        teacher.institution = (
+            get_or_create_institution(db, institution_name) if institution_name else None
+        )
+
     for field_name, value in updates.items():
         setattr(teacher, field_name, value)
 

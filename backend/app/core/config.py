@@ -39,6 +39,14 @@ class Settings:
         )
         self.session_ttl_hours: int = int(os.environ.get("NKULIA_SESSION_TTL_HOURS", "12"))
 
+        # Génération (ADR-0005). « offline » par défaut : aucun réseau requis.
+        # La clé API vient UNIQUEMENT de l'environnement — jamais du code, jamais
+        # de la base, jamais des logs.
+        self.llm_provider: str = os.environ.get("NKULIA_LLM_PROVIDER", "offline")
+        self.llm_api_key: str | None = os.environ.get("NKULIA_LLM_API_KEY") or None
+        self.llm_model: str = os.environ.get("NKULIA_LLM_MODEL", "claude-sonnet-5-5")
+        self.llm_base_url: str = os.environ.get("NKULIA_LLM_BASE_URL", "https://api.anthropic.com")
+
 
 @lru_cache
 def get_settings() -> Settings:

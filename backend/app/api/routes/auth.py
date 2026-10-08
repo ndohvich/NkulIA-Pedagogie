@@ -18,9 +18,10 @@ from app.core.security import (
     session_expiry,
     verify_password,
 )
-from app.db.models import AuthSession, Institution, Teacher
+from app.db.models import AuthSession, Teacher
 from app.db.session import get_db
 from app.schemas.teacher import SessionOut, TeacherLogin, TeacherProfileOut, TeacherRegister
+from app.services.institutions import get_or_create_institution
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -50,13 +51,11 @@ def _create_session(db: Session, teacher: Teacher) -> str:
 
 @router.post("/register", response_model=SessionOut, status_code=status.HTTP_201_CREATED)
 def register(payload: TeacherRegister, db: Session = Depends(get_db)) -> SessionOut:
-    institution = None
-    if payload.institution_name:
-        institution = db.query(Institution).filter_by(name=payload.institution_name).first()
-        if institution is None:
-            institution = Institution(name=payload.institution_name)
-            db.add(institution)
-            db.flush()  # attribue un id à `institution` sans terminer la transaction
+    institution = (
+        get_or_create_institution(db, payload.institution_name)
+        if payload.institution_name
+        else None
+    )
 
     teacher = Teacher(
         email=payload.email,
